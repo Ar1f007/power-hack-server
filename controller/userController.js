@@ -28,5 +28,27 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  res.send('hello from login');
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Please provide all values' });
+  }
+
+  const user = await User.findOne({ email }).select('+password').exec();
+
+  if (!user) {
+    return res.status(StatusCodes.NOT_FOUND).json({ message: 'Invalid credentials' });
+  }
+
+  const isPasswordCorrect = await user.comparePassword(password);
+
+  if (!isPasswordCorrect) {
+    return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Invalid credentials' });
+  }
+
+  const token = await user.createJWT();
+
+  user.password = undefined;
+
+  res.status(StatusCodes.OK).json({ user, token });
 };
