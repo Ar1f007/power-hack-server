@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
   res.send('Hello from server');
 });
 
-const PORT = process.env.port || 5000;
+const PORT = process.env.PORT || 5000;
 const start = async () => {
   try {
     await client.connect();
