@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
 const connectDB = require('./db/connect');
-const { client } = require('./db/connect');
 const router = require('./routes/route');
 const app = express();
 app.use(cors());
@@ -18,7 +17,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 5000;
 const start = async () => {
   try {
-    await client.connect();
+    await connectDB(process.env.MONGO_URI);
     app.listen(PORT, () => console.log('Running at', PORT));
   } catch (error) {
     console.log(error);
