@@ -8,11 +8,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use('/api', router);
+
 app.get('/', (req, res) => {
   res.send('Hello from server');
 });
-
-app.use('/api', router);
 
 const PORT = process.env.port || 5000;
 const start = async () => {
