@@ -59,7 +59,7 @@ exports.updateBill = async (req, res) => {
   const { name, email, phone, amount } = req.body;
 
   const bill = await Bill.findByIdAndUpdate(id, { name, email, phone, amount }, { new: true });
-  console.log(bill);
+
   if (bill) {
     res.status(StatusCodes.OK).json(bill);
   }
