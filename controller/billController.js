@@ -23,6 +23,13 @@ exports.getBills = async (req, res) => {
   const { search } = req.query;
   let result;
   let totalBills;
+
+  const totalBillings = await Bill.find().exec();
+  const totalPaidAmount = totalBillings.reduce((acc, curr) => {
+    acc = acc + curr.amount;
+    return acc;
+  }, 0);
+
   if (search) {
     const query = { $regex: search, $options: 'i' };
     result = Bill.find({ $or: [{ name: query }, { email: query }, { phone: query }] });
@@ -50,7 +57,7 @@ exports.getBills = async (req, res) => {
 
   const bills = await result.sort({ createdAt: -1 });
 
-  res.status(StatusCodes.OK).json({ bills, numOfPages });
+  res.status(StatusCodes.OK).json({ bills, numOfPages, totalPaidAmount });
 };
 
 exports.updateBill = async (req, res) => {
