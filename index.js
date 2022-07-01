@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 const cors = require('cors');
 const connectDB = require('./db/connect');
+const { client } = require('./db/connect');
 const router = require('./routes/route');
 const app = express();
 app.use(cors());
@@ -17,7 +18,7 @@ app.get('/', (req, res) => {
 const PORT = process.env.port || 5000;
 const start = async () => {
   try {
-    await connectDB();
+    await client.connect();
     app.listen(PORT, () => console.log('Running at', PORT));
   } catch (error) {
     console.log(error);

@@ -1,7 +1,9 @@
-const mongoose = require('mongoose');
-const connectDB = () =>
-  mongoose.connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ioo2w.mongodb.net/?retryWrites=true&w=majority`
-  );
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-module.exports = connectDB;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ioo2w.mongodb.net/?retryWrites=true&w=majority`;
+
+exports.client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverApi: ServerApiVersion.v1,
+});
