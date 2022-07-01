@@ -20,9 +20,37 @@ exports.addBill = async (req, res) => {
 };
 
 exports.getBills = async (req, res) => {
-  const bills = await Bill.find().sort({ createdAt: -1 });
+  const { search } = req.query;
+  let result;
+  let totalBills;
+  if (search) {
+    const query = { $regex: search, $options: 'i' };
+    result = Bill.find({ $or: [{ name: query }, { email: query }, { phone: query }] });
+  } else {
+    result = Bill.find();
+  }
 
-  res.status(StatusCodes.OK).json(bills);
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+
+  const skip = (page - 1) * limit;
+  result = result.skip(skip).limit(limit);
+
+  if (search) {
+    const query = { $regex: search, $options: 'i' };
+
+    totalBills = await Bill.countDocuments({
+      $or: [{ name: query }, { email: query }, { phone: query }],
+    });
+  } else {
+    totalBills = await Bill.countDocuments();
+  }
+
+  const numOfPages = Math.ceil(totalBills / limit);
+
+  const bills = await result.sort({ createdAt: -1 });
+
+  res.status(StatusCodes.OK).json({ bills, numOfPages });
 };
 
 exports.updateBill = async (req, res) => {
